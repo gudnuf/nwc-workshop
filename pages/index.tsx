@@ -32,14 +32,20 @@ export default function Home() {
     if (!publicKey) {
       return;
     }
-    // TODO: define filter for requests to our wallet
+   
     // request: kind 23194, pTag = our pubkey
-    // const filter: NDKFilter = {};
-
+    const filter: NDKFilter = {
+      kinds: [23194],
+      '#p': [publicKey],
+      since: Math.floor(Date.now() / 1000) // only look at events from after page loads
+    };
+ 
+    console.log("SUBSCRIBING TO: ", filter)
+ 
     // subscribe to filter and pass incoming events to nwc request handler
     // NOTE: closeOnEose: false will keep the subscription open
-    // subscribeAndHandle(filter, handleNwcRequest, { closeOnEose: false })
-  }, [publicKey])
+    subscribeAndHandle(filter, handleNwcRequest, { closeOnEose: false })
+  }, [publicKey]) 
 
   return (
     <main

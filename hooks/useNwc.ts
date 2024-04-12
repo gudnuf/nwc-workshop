@@ -53,14 +53,25 @@ const useNwc = ({ ndk, privateKey, publicKey }: UseNwcProps) => {
     */
     const generateNwcUri = (opts?: { budgetSat?: number, expiryUnix?: number }): string => {
         // generate a new secret (private key)
-
+        const secretBytes = generateSecretKey();
+        const nwcPublicKey = getPublicKey(secretBytes);
+ 
+        const secret = Buffer.from(secretBytes).toString('hex');
+ 
+        const walletPubkey = publicKey;
+ 
+        const relay = process.env.NEXT_PUBLIC_NWC_LISTEN_RELAY!
+ 
         // assemble uri: nostr+walletconnect://<wallet_pubkey>?secret=<generated_secret>&relay=<listening_relay>
-        const uri = "I'm not implemented"
-
-        // save uri pubkey, budget, expiry to local storage
-
+        const uri = `nostr+walletconnect://${walletPubkey}?secret=${secret}&relay=${encodeURIComponent(relay)}`
+ 
+        // save uri pubkey, budget, expiry to local storagey
+        localStorage.setItem(nwcPublicKey, JSON.stringify(
+            { budgetSat: opts?.budgetSat, expiryUnix: opts?.expiryUnix }
+        ))
+ 
         return uri
-    }
+    } 
 
     /**
      * Use NIP04 to decrypt
@@ -72,18 +83,20 @@ const useNwc = ({ ndk, privateKey, publicKey }: UseNwcProps) => {
         appPubkey: string, encryptedContent: string
     ): Promise<{ method: NWCMethods; params: object }> => {
         // use NIP04 for decrypt with app's pubkey and OUR private key
-
-        // parse decrypted content ie JSON.parse...
-
-        // validate request format: `{method: nwc_method, params: {method_params}}`
-
-        // NOTE: if the request is bad just ignore it because we may not have method or even been able to decrypt 
-
-        return {
-            method: "" as NWCMethods,
-            params: {}
-        }
+        const decrypted = await nip04.decrypt(privateKey, appPubkey, encryptedContent);
+        console.log("Decrypted content", decrypted)
+ 
+        // parse decrypted content
+        const parsedRequest = JSON.parse(decrypted);
+ 
+        const method = parsedRequest.method as NWCMethods;
+        const params = parsedRequest.params;
+ 
+        // NOTE: if the request is bad just ignore it because we may not have method or even been able to decrypt
+ 
+        return { method, params }
     }
+ 
 
     /**
      * Checks that our wallet issued this connection and that budget not exceeded nore is connection expired
@@ -138,14 +151,14 @@ const useNwc = ({ ndk, privateKey, publicKey }: UseNwcProps) => {
         console.log("Sending Response: ", content)
 
         // TODO: use nip04 to encrypt the content with app's pubkey and our private key
-        const encryptedResponse = "";
+        const encryptedResponse = await nip04.encrypt(privateKey, appPubkey, JSON.stringify(content));
 
-        // construct the kind 23195 response
-        const responseEvent = new NDKEvent(ndk, {
-            kind: 23195,
-            tags: [["e", ""], ["p", ""]], // TODO: add e  and p tags,
-            content: encryptedResponse,
-        } as NostrEvent)
+       // construct the kind 23195 response
+       const responseEvent = new NDKEvent(ndk, {
+           kind: 23195,
+           tags: [["e", requestId], ["p", appPubkey]],
+           content: encryptedResponse,
+       } as NostrEvent)
 
         try {
             console.log("Publishing: ", responseEvent.rawEvent())
