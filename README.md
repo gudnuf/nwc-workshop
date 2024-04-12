@@ -1,40 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Bit Block Boom 2024 - NWC
 
-## Getting Started
+This repository is filled with comments to help you learn about building on Nostr and implementing NWC.
 
-First, run the development server:
+Here is a link to the accompanying slides: https://docs.google.com/presentation/d/1Cx_PmmofEKw8pqwdfSVhe2p25kUet1dUGLd1jUFFqcs/edit?usp=sharing 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Using this Repo
+
+First, follow the below instructions on running the app to get things up and running.
+
+Then, checkout the `unfinished` branch to see some fill in the blanks.
+
+```
+git checkout unfinished
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Next, go through the code snippets at the end of the above slideshow and find where they go in the project. If you want to learn, do not just copy and paste, write the code out even if it's word for word.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Finally, read through all the comments, break things, and implement more NWC methods.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Refer to [NIP47](https://github.com/nostr-protocol/nips/blob/master/47.md) for any protocol questions.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Running the App
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Reccommended
 
-## Learn More
+Use nix.
 
-To learn more about Next.js, take a look at the following resources:
+Install nix from [Determinate Systems](https://determinate.systems/posts/determinate-nix-installer/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Just copy the below into your terminal to install nix on your system.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
 
-## Deploy on Vercel
+NOTE: If you install nix another way, make sure you enable [experimental features](https://nixos.wiki/wiki/Flakes)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Then start the app with
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+npm run dev
+```
+
+### Also Works
+
+Make sure you have [Node.js](https://nodejs.org/en/download) installed.
+
+```
+npm install
+```
+
+And run the app with
+
+```
+npm run dev
+```
